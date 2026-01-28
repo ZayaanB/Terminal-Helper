@@ -8,7 +8,7 @@ import re
 class AuraGUI(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("Zane AI Terminal Helper")
+        self.title("Aura AI Terminal Helper")
         self.geometry("900x650")
         
         # Determine OS for the prompt
@@ -23,7 +23,7 @@ class AuraGUI(ctk.CTk):
         self.input_field.pack(padx=20, pady=(0, 10), fill="x")
         self.input_field.bind("<Return>", lambda e: self.process_input())
 
-        # ADDED: Execute Button for safety
+        # Execute Button for safety
         self.pending_command = ""
         self.exec_button = ctk.CTkButton(self, text="Execute Suggested Command", state="disabled", command=self.run_shell_task, fg_color="green")
         self.exec_button.pack(padx=20, pady=(0, 20))
@@ -42,11 +42,10 @@ class AuraGUI(ctk.CTk):
     def ai_logic(self, user_text):
         try:
             self.history.append({"role": "user", "content": user_text})
-            # Change 'llama3' to your specific model (e.g., 'llama3.2')
+
             response = ollama.chat(model='llama3.2', messages=self.history)
             raw_content = response['message']['content'].strip()
             
-            # Regex to remove backticks if the AI includes them
             clean_command = re.sub(r'^`+|`+$', '', raw_content)
             
             self.pending_command = clean_command
@@ -71,4 +70,4 @@ class AuraGUI(ctk.CTk):
 
 if __name__ == "__main__":
     app = AuraGUI()
-    app.mainloop() # This line keeps the window alive!
+    app.mainloop()
