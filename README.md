@@ -92,7 +92,3 @@ python app.py
 - Commands are never executed automatically; you must click the execute button.
 - Your `.env` file (with API keys) is in `.gitignore` and should not be committed.
 - Updates run only after you click "Update All".
-
-## License
-
-MIT
