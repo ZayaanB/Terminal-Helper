@@ -90,5 +90,10 @@ python app.py
 ## Security
 
 - Commands are never executed automatically; you must click the execute button.
+- **Safety layer**: Destructive commands (e.g. `rm -rf /`, `format`, `shutdown`, fork bombs) are detected and blocked before execution.
 - Your `.env` file (with API keys) is in `.gitignore` and should not be committed.
 - Updates run only after you click "Update All".
+
+## License
+
+MIT

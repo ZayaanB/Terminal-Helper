@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+from safety import CommandSafety
+
 try:
     from openai import OpenAI
 except ImportError:
@@ -26,23 +28,18 @@ class ZaneGUI(ctk.CTk):
         super().__init__()
         self.title("Zane AI Terminal Helper")
         self.geometry("900x650")
-        
-        # Determine OS for the prompt
         self.os_type = "Windows PowerShell" if os.name == 'nt' else "Linux/Mac Bash"
         self.history = [{"role": "system", "content": f"You are a terminal expert on {self.os_type}. Return PowerShell commands on Windows. Output ONLY the raw command. No markdown, no backticks, no explanations."}]
         self.client = None
         self.model = _get_env("OPENAI_MODEL", "gpt-4o-mini")
         self._init_client()
 
-        # --- UI Components ---
         self.output_area = ctk.CTkTextbox(self, font=("Roboto Mono", 14))
         self.output_area.pack(padx=20, pady=20, fill="both", expand=True)
 
         self.input_field = ctk.CTkEntry(self, placeholder_text="Ask to do something...", height=40)
         self.input_field.pack(padx=20, pady=(0, 10), fill="x")
         self.input_field.bind("<Return>", lambda e: self.process_input())
-
-        # Execute Button for safety
         self.pending_command = ""
         self.exec_button = ctk.CTkButton(self, text="Execute Suggested Command", state="disabled", command=self.run_shell_task, fg_color="green")
         self.exec_button.pack(padx=20, pady=(0, 20))
@@ -107,7 +104,11 @@ class ZaneGUI(ctk.CTk):
                     raise
 
     def run_shell_task(self):
-        """Actually executes the command when the user clicks the button."""
+        safe, reason = CommandSafety.check(self.pending_command)
+        if not safe:
+            self.log(f"⚠ {reason}")
+            self.log(f"  Command not executed: {self.pending_command}")
+            return
         try:
             self.log(f"Executing: {self.pending_command}...")
             if os.name == "nt":
@@ -119,7 +120,7 @@ class ZaneGUI(ctk.CTk):
                 result = subprocess.run(self.pending_command, shell=True, capture_output=True, text=True, timeout=300)
             output = result.stdout if result.returncode == 0 else result.stderr
             self.log(f"--- Output ---\n{output}")
-            self.exec_button.configure(state="disabled")  # Reset
+            self.exec_button.configure(state="disabled")
         except Exception as e:
             self.log(f"System Error: {e}")
 
