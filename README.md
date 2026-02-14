@@ -1,6 +1,6 @@
 # Terminal Helper AI
 
-A local AI agent that helps you use the Windows or Linux terminal. Ask in natural language, get appropriate commands with descriptions and prerequisites, and execute them only when you give permission. Includes an update scanner to find outdated packages installed via terminal.
+A local AI agent that helps you use the Windows or Linux terminal. Ask in natural language, get appropriate commands with descriptions and prerequisites, and execute them only when you give permission. Includes an updated scanner to find outdated packages installed via the  terminal.
 
 ## Features
 
@@ -97,3 +97,4 @@ python app.py
 ## License
 
 MIT
+
